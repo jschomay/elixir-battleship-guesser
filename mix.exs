@@ -1,4 +1,4 @@
-defmodule Battelship.MixProject do
+defmodule Battleship.MixProject do
   use Mix.Project
 
   def project do
@@ -15,7 +15,7 @@ defmodule Battelship.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Battelship.Application, []}
+      mod: {Battleship.Application, []}
     ]
   end
 

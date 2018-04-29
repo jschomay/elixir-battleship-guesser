@@ -1,6 +1,6 @@
-defmodule Battelship do
+defmodule Battleship do
   @moduledoc """
-  Documentation for Battelship.
+  Documentation for Battleship.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Battelship do
 
   ## Examples
 
-      iex> Battelship.hello
+      iex> Battleship.hello
       :world
 
   """

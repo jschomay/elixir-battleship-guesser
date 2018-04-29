@@ -1,8 +1,8 @@
-defmodule BattelshipTest do
+defmodule BattleshipTest do
   use ExUnit.Case
-  doctest Battelship
+  doctest Battleship
 
   test "greets the world" do
-    assert Battelship.hello() == :world
+    assert Battleship.hello() == :world
   end
 end

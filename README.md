@@ -1,4 +1,4 @@
-# Battelship
+# Battleship
 
 **TODO: Add description**
 
