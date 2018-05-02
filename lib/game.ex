@@ -16,7 +16,7 @@ defmodule Game do
     GenServer.cast(__MODULE__, :draw)
   end
 
-  def is_game_over do
+  def game_over? do
     GenServer.call(__MODULE__, :is_game_over)
   end
 
@@ -49,11 +49,11 @@ defmodule Game do
   ######
 
   def handle_call(:is_game_over, _, state) do
-    {:reply, Board.is_game_over(state.board), state}
+    {:reply, Board.game_over?(state.board), state}
   end
 
   def handle_call(:make_guess, _, state = %__MODULE__{board: board, ai: ai}) do
-    with {:ok, guess, new_ai} <- AI.make_guess(ai),
+    with {:ok, guess, new_ai} <- AI.make_guess(ai, board),
          new_board <- Board.add_play(board, Board.guess(guess)) do
       {:reply, guess, %__MODULE__{state | board: new_board, ai: new_ai, last_guess: guess}}
     else
@@ -64,7 +64,7 @@ defmodule Game do
   def handle_call({:outcome, outcome}, _, state) do
     case outcome do
       :hit ->
-        new_ai = AI.hit(state.ai)
+        new_ai = AI.hit(state.ai, state.last_guess)
 
         new_board = Board.add_play(state.board, Board.hit(state.last_guess))
 
