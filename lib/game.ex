@@ -88,6 +88,7 @@ defmodule Game do
 
   def handle_cast(:draw, state) do
     IO.inspect(Board.draw(state.board))
+    IO.inspect(state.last_guess)
     {:noreply, state}
   end
 

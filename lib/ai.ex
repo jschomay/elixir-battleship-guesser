@@ -25,13 +25,13 @@ defmodule AI do
     # go down from target
     #   same logic...
 
-    search_horizontally = Node.select([:right, :left])
-
-    search_vertically = Node.select([:up, :down])
-
-    narrow_down = Node.select([search_horizontally, search_vertically])
-
-    Node.sequence([:random_guess, narrow_down])
+    Node.sequence([
+      :random_guess,
+      Node.select([
+        Node.select([:right, :left]),
+        Node.select([:up, :down])
+      ])
+    ])
   end
 
   def hit(ai, point) do
@@ -76,24 +76,15 @@ defmodule AI do
         end
 
       direction ->
-        with {:ok, next_guess, new_state} <- pick_adjacent(ai, direction, board) do
+        with {:ok, next_guess} <- Board.adjacent(ai.current_target, direction, board) do
           index = Board.point_to_index(next_guess, board)
 
-          updated_state = new_state |> update_target(next_guess) |> remove_guess(index)
+          updated_state = ai |> update_target(next_guess) |> remove_guess(index)
 
           {:ok, next_guess, updated_state}
         else
-          err -> {:error, err}
+          err -> %__MODULE__{ai | bt: BT.fail(ai.bt)} |> retarget |> make_guess(board)
         end
-    end
-  end
-
-  defp pick_adjacent(ai, direction, board) do
-    # TODO maybe move this up into make_guess?
-    with {:ok, next_guess} <- Board.adjacent(ai.current_target, direction, board) do
-      {:ok, next_guess, ai}
-    else
-      err -> %__MODULE__{ai | bt: BT.fail(ai.bt)} |> retarget |> make_guess(board)
     end
   end
 

@@ -75,7 +75,7 @@ defmodule Board do
     |> Enum.take(size({cols, rows}))
     |> mark(plays)
     |> Enum.chunk_every(cols)
-    |> Enum.map_join("\n\n", fn row -> Enum.join(row, "  ") end)
+    |> Enum.map_join("\n", fn row -> Enum.join(row, "  ") end)
     |> IO.puts()
   end
 
