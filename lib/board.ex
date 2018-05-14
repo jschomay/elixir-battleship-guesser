@@ -25,6 +25,11 @@ defmodule Board do
     Enum.member?(Map.keys(board.plays), i)
   end
 
+  def available_indexes(board = %__MODULE__{dimensions: dimensions}) do
+    MapSet.new(0..(size(dimensions) - 1))
+    |> Enum.filter(fn i -> !already_played?(board, index_to_point(i, board)) end)
+  end
+
   def adjacent(point, direction, board = %__MODULE__{dimensions: {cols, rows}}) do
     handle = fn
       :left, {1, _} -> {:error, :off_board}

@@ -2,13 +2,10 @@ defmodule AI do
   alias BehaviorTree, as: BT
   alias BehaviorTree.Node
 
-  defstruct [:bt, :target_basis, :current_target, available_points: MapSet.new()]
+  defstruct [:bt, :target_basis, :current_target]
 
   def new({cols, rows}) do
-    %__MODULE__{
-      bt: BT.start(bt()),
-      available_points: MapSet.new(0..(cols * rows - 1))
-    }
+    %__MODULE__{bt: BT.start(bt())}
   end
 
   defp bt do
@@ -70,7 +67,7 @@ defmodule AI do
       :random_guess ->
         with {:ok, next_guess} <- choose_random_point(ai, board) do
           index = Board.point_to_index(next_guess, board)
-          {:ok, next_guess, remove_guess(ai, index)}
+          {:ok, next_guess, ai}
         else
           err -> {:error, err}
         end
@@ -79,7 +76,7 @@ defmodule AI do
         with {:ok, next_guess} <- Board.adjacent(ai.current_target, direction, board) do
           index = Board.point_to_index(next_guess, board)
 
-          updated_state = ai |> update_target(next_guess) |> remove_guess(index)
+          updated_state = update_target(ai, next_guess)
 
           {:ok, next_guess, updated_state}
         else
@@ -98,13 +95,11 @@ defmodule AI do
 
   defp choose_random_point(ai, board) do
     guess =
-      Enum.random(ai.available_points)
+      board
+      |> Board.available_indexes()
+      |> Enum.random()
       |> Board.index_to_point(board)
 
     {:ok, guess}
-  end
-
-  defp remove_guess(ai, index) do
-    %__MODULE__{ai | available_points: MapSet.delete(ai.available_points, index)}
   end
 end
