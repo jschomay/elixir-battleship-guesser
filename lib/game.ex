@@ -8,7 +8,7 @@ defmodule Game do
   end
 
   def init({cols, rows}) do
-    state = %__MODULE__{ai: AI.new({cols, rows}), board: Board.new({cols, rows})}
+    state = %__MODULE__{ai: AI.new(), board: Board.new({cols, rows})}
     {:ok, state}
   end
 
@@ -36,8 +36,8 @@ defmodule Game do
     GenServer.cast(__MODULE__, :draw)
   end
 
-  def sunk() do
-    GenServer.call(__MODULE__, {:outcome, :sunk})
+  def sunk(ship_size) do
+    GenServer.call(__MODULE__, {:outcome, {:sunk, ship_size}})
     GenServer.call(__MODULE__, :make_guess)
     GenServer.cast(__MODULE__, :draw)
   end
@@ -77,8 +77,8 @@ defmodule Game do
 
         {:reply, :ok, %__MODULE__{state | board: new_board, ai: new_ai}}
 
-      :sunk ->
-        new_ai = AI.sunk(state.ai)
+      {:sunk, ship_size} ->
+        new_ai = AI.sunk(state.ai, ship_size)
 
         new_board = Board.add_play(state.board, Board.sunk(state.last_guess))
 
