@@ -5,11 +5,13 @@ defmodule Battleship.Application do
 
   use Application
 
+
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: Battleship.Worker.start_link(arg)
       # {Battleship.Worker, arg},
+      # {Game, {7,5}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -13,7 +13,7 @@ defmodule Game do
   end
 
   def draw do
-    GenServer.cast(__MODULE__, :draw)
+    GenServer.call(__MODULE__, :draw)
   end
 
   def game_over? do
@@ -26,20 +26,14 @@ defmodule Game do
 
   def hit() do
     GenServer.call(__MODULE__, {:outcome, :hit})
-    GenServer.call(__MODULE__, :make_guess)
-    GenServer.cast(__MODULE__, :draw)
   end
 
   def miss() do
     GenServer.call(__MODULE__, {:outcome, :miss})
-    GenServer.call(__MODULE__, :make_guess)
-    GenServer.cast(__MODULE__, :draw)
   end
 
   def sunk(ship_size) do
     GenServer.call(__MODULE__, {:outcome, {:sunk, ship_size}})
-    GenServer.call(__MODULE__, :make_guess)
-    GenServer.cast(__MODULE__, :draw)
   end
 
   def winner do
@@ -86,14 +80,13 @@ defmodule Game do
     end
   end
 
-  def handle_cast(:draw, state) do
-    IO.inspect(Board.draw(state.board))
-    IO.inspect(state.last_guess)
-    {:noreply, state}
+  def handle_call(:draw, _, state) do
+    board_string = Board.draw(state.board)
+    {:reply, board_string, state}
   end
 
   def handle_cast(:winner, state) do
-    {:stop, "Thank you for playing!", state}
+    {:stop, :normal, state}
   end
 
   def terminate(reason, state) do

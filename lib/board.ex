@@ -81,7 +81,6 @@ defmodule Board do
     |> mark(plays)
     |> Enum.chunk_every(cols)
     |> Enum.map_join("\n", fn row -> Enum.join(row, "  ") end)
-    |> IO.puts()
   end
 
   defp size({cols, rows}) do
