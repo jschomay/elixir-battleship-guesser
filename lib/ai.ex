@@ -5,10 +5,22 @@ defmodule AI do
   defstruct [:bt, :target_basis, :current_target, hit_streak: []]
 
   def new() do
-    check_adjacent =
-      Node.select([
+    check_horizontal =
+      Node.random([
         Node.select([:right, :left]),
-        Node.select([:up, :down])
+        Node.select([:left, :right])
+      ])
+
+    check_vertical =
+      Node.random([
+        Node.select([:up, :down]),
+        Node.select([:down, :up])
+      ])
+
+    check_adjacent =
+      Node.random([
+        Node.select([check_horizontal, check_vertical]),
+        Node.select([check_vertical, check_horizontal])
       ])
 
     bt =
