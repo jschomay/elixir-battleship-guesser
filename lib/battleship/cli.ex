@@ -15,11 +15,11 @@ defmodule Battleship.CLI do
       |> String.trim()
       |> String.to_integer()
 
-    Game.start_link({cols, rows})
+    Game.start_link({cols, rows}, name: :cli)
 
     IO.gets(
       "\nOK, here is your board.\n\n" <>
-        Game.draw() <>
+        Game.draw(:cli) <>
         "\n\nMake a note of where you want to place your ships, and I'll try to sink them.  When you are ready, press <enter>\n"
     )
 
@@ -31,8 +31,8 @@ defmodule Battleship.CLI do
   end
 
   defp play do
-    {col, row} = Game.make_guess()
-    IO.puts("\n" <> Game.draw() <> "\n")
+    {col, row} = Game.make_guess(:cli)
+    IO.puts("\n" <> Game.draw(:cli) <> "\n")
     IO.puts("I guess column " <> Integer.to_string(col) <> ", row " <> Integer.to_string(row))
 
     show_instructions()
@@ -43,12 +43,12 @@ defmodule Battleship.CLI do
   end
 
   defp execute_command("1") do
-    Game.miss()
+    Game.miss(:cli)
     play()
   end
 
   defp execute_command("2") do
-    Game.hit()
+    Game.hit(:cli)
     play()
   end
 
@@ -56,7 +56,7 @@ defmodule Battleship.CLI do
     IO.gets("\nWhat size ship did I sink?\n")
     |> String.trim()
     |> String.to_integer()
-    |> Game.sunk()
+    |> Game.sunk(:cli)
 
     play()
   end

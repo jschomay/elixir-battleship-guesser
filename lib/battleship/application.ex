@@ -11,12 +11,13 @@ defmodule Battleship.Application do
     children = [
       # Starts a worker by calling: Battleship.Worker.start_link(arg)
       # {Battleship.Worker, arg},
-      # {Game, {7,5}}
+      # {Battleship.Supervisor, name: Battleship.Supervisor}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Battleship.Supervisor]
-    Supervisor.start_link(children, opts)
+    # opts = [strategy: :one_for_one, name: Battleship.Supervisor]
+    # Supervisor.start_link(children, opts)
+    Battleship.Supervisor.start_link()
   end
 end

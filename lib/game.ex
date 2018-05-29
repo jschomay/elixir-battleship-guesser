@@ -3,8 +3,8 @@ defmodule Game do
 
   defstruct [:ai, :board, :last_guess]
 
-  def start_link({cols, rows}) do
-    GenServer.start_link(__MODULE__, {cols, rows}, name: __MODULE__)
+  def start_link({cols, rows}, opts \\ []) do
+    GenServer.start_link(__MODULE__, {cols, rows}, opts)
   end
 
   def init({cols, rows}) do
@@ -12,32 +12,32 @@ defmodule Game do
     {:ok, state}
   end
 
-  def draw do
-    GenServer.call(__MODULE__, :draw)
+  def draw(pid) do
+    GenServer.call(pid, :draw)
   end
 
-  def game_over? do
-    GenServer.call(__MODULE__, :is_game_over)
+  def game_over?(pid) do
+    GenServer.call(pid, :is_game_over)
   end
 
-  def make_guess do
-    GenServer.call(__MODULE__, :make_guess)
+  def make_guess(pid) do
+    GenServer.call(pid, :make_guess)
   end
 
-  def hit() do
-    GenServer.call(__MODULE__, {:outcome, :hit})
+  def hit(pid) do
+    GenServer.call(pid, {:outcome, :hit})
   end
 
-  def miss() do
-    GenServer.call(__MODULE__, {:outcome, :miss})
+  def miss(pid) do
+    GenServer.call(pid, {:outcome, :miss})
   end
 
-  def sunk(ship_size) do
-    GenServer.call(__MODULE__, {:outcome, {:sunk, ship_size}})
+  def sunk(pid, ship_size) do
+    GenServer.call(pid, {:outcome, {:sunk, ship_size}})
   end
 
-  def winner do
-    GenServer.cast(__MODULE__, :winner)
+  def stop(pid) do
+    GenServer.stop(pid)
   end
 
   ######
@@ -85,11 +85,6 @@ defmodule Game do
     {:reply, board_string, state}
   end
 
-  def handle_cast(:winner, state) do
-    {:stop, :normal, state}
-  end
-
   def terminate(reason, state) do
-    IO.puts("The server terminated")
   end
 end

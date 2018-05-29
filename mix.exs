@@ -20,7 +20,7 @@ defmodule Battleship.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      # mod: {Battleship.Application, []}
+      mod: {Battleship.Application, []}
     ]
   end
 
