@@ -9,8 +9,8 @@ defmodule Battleship.Registry do
     GenServer.call(__MODULE__, {:lookup, name})
   end
 
-  def create(name, {cols, rows} = size) do
-    GenServer.cast(__MODULE__, {:create, name, size})
+  def new({cols, rows} = size) do
+    GenServer.call(__MODULE__, {:new, size})
   end
 
   ## 
@@ -25,22 +25,19 @@ defmodule Battleship.Registry do
     {:reply, Map.fetch(names, name), state}
   end
 
-  def handle_cast({:create, name, size}, {names, refs}) do
-    # TODO change to call and generate name to return
-    if Map.has_key?(names, name) do
-      {:noreply, {names, refs}}
-    else
-      {:ok, pid} =
-        DynamicSupervisor.start_child(
-          Battleship.GameSupervisor,
-          Supervisor.child_spec({Game, size}, restart: :temporary)
-        )
+  def handle_call({:new, size}, _from, {names, refs}) do
+    name = UUID.uuid1()
 
-      ref = Process.monitor(pid)
-      refs = Map.put(refs, ref, name)
-      names = Map.put(names, name, pid)
-      {:noreply, {names, refs}}
-    end
+    {:ok, pid} =
+      DynamicSupervisor.start_child(
+        Battleship.GameSupervisor,
+        Supervisor.child_spec({Game, size}, restart: :temporary)
+      )
+
+    ref = Process.monitor(pid)
+    refs = Map.put(refs, ref, name)
+    names = Map.put(names, name, pid)
+    {:reply, name, {names, refs}}
   end
 
   def handle_info({:DOWN, ref, :process, _pid, _reason}, {names, refs}) do
