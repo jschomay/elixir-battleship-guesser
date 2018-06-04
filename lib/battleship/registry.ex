@@ -1,5 +1,6 @@
 defmodule Battleship.Registry do
   use GenServer
+  alias Battleship.Game
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)

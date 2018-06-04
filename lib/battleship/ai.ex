@@ -1,6 +1,7 @@
-defmodule AI do
+defmodule Battleship.AI do
   alias BehaviorTree, as: BT
   alias BehaviorTree.Node
+  alias Battleship.Board
 
   defstruct [:bt, :target_basis, :current_target, hit_streak: []]
 

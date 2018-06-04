@@ -1,4 +1,4 @@
-defmodule Board do
+defmodule Battleship.Board do
   defstruct [:dimensions, :plays]
 
   def new({cols, rows}) do

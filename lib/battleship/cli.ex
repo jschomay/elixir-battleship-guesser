@@ -1,4 +1,6 @@
 defmodule Battleship.CLI do
+  alias Battleship.Game
+
   def main(_args) do
     IO.puts("\nLet's play Battleship!!\n")
     start_game()

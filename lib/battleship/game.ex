@@ -1,5 +1,8 @@
-defmodule Game do
+defmodule Battleship.Game do
   use GenServer
+
+  alias Battleship.AI
+  alias Battleship.Board
 
   defstruct [:ai, :board, :last_guess]
 

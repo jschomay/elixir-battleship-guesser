@@ -21,6 +21,20 @@ use Mix.Config
 #     config :logger, level: :info
 #
 
+
+config :battleship, Web.Endpoint,
+  url: [host: "localhost"],
+  http: [port: 4000],
+  secret_key_base: "BbO/k/BIPh5DyKiUIuGsY8iL0JyRfd5NLPSPCZ7WQAVCzBkzBcSrP//ApnjmNU4B"
+  # render_errors: [view: Web.ErrorView, accepts: ~w(html json)],
+  # pubsub: [name: Web.PubSub,
+           # adapter: Phoenix.PubSub.PG2]
+
+
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:user_id]
+
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.
