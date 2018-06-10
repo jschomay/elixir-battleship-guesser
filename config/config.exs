@@ -25,8 +25,8 @@ use Mix.Config
 config :battleship, Web.Endpoint,
   url: [host: "localhost"],
   http: [port: 4000],
-  secret_key_base: "BbO/k/BIPh5DyKiUIuGsY8iL0JyRfd5NLPSPCZ7WQAVCzBkzBcSrP//ApnjmNU4B"
-  # render_errors: [view: Web.ErrorView, accepts: ~w(html json)],
+  secret_key_base: "BbO/k/BIPh5DyKiUIuGsY8iL0JyRfd5NLPSPCZ7WQAVCzBkzBcSrP//ApnjmNU4B",
+  render_errors: [view: Web.ErrorView, accepts: ~w(html json)]
   # pubsub: [name: Web.PubSub,
            # adapter: Phoenix.PubSub.PG2]
 

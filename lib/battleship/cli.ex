@@ -55,10 +55,11 @@ defmodule Battleship.CLI do
   end
 
   defp execute_command("3") do
-    IO.gets("\nWhat size ship did I sink?\n")
+    size = IO.gets("\nWhat size ship did I sink?\n")
     |> String.trim()
     |> String.to_integer()
-    |> Game.sunk(:cli)
+
+    Game.sunk(:cli, size)
 
     play()
   end

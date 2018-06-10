@@ -59,7 +59,7 @@ defmodule Battleship.Board do
     %__MODULE__{board | plays: new_plays}
   end
 
-  def guess(point) do
+  defp guess(point) do
     {point, "o"}
   end
 
@@ -75,7 +75,14 @@ defmodule Battleship.Board do
     hit(point)
   end
 
-  def draw(%__MODULE__{plays: plays, dimensions: {cols, rows}}) do
+  def draw(board = %__MODULE__{plays: plays, dimensions: {cols, rows}}, last_guess) do
+    %{plays: plays} =
+      if last_guess do
+        add_play(board, guess(last_guess))
+      else
+        board
+      end
+
     Stream.cycle(["."])
     |> Enum.take(size({cols, rows}))
     |> mark(plays)
