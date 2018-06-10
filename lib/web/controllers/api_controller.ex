@@ -2,7 +2,7 @@ defmodule Web.ApiController do
   use Web, :controller
 
   def index(conn, _params) do
-    text(conn, "This is the api server, start a new game with POST /new/:cols/:rows")
+    text(conn, "See https://github.com/jschomay/elixir-battleship-guesser for usage.")
   end
 
   @doc """
@@ -91,6 +91,10 @@ defmodule Web.ApiController do
 
   @doc """
   Deletes the game.  Requires a "game-token" header.
+
+      curl -X DELETE -H "Content-Type: application/json" -H "game-token: MY_TOKEN" localhost:4000/leave/
+
+  Returns status 204 if successful.
   """
   def leave(conn, params) do
     conn.assigns[:game]
