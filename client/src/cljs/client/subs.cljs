@@ -1,8 +1,13 @@
 (ns client.subs
   (:require
-   [re-frame.core :as re-frame]))
+   [re-frame.core :as rf]))
 
-(re-frame/reg-sub
+(rf/reg-sub
  ::size
  (fn [db]
    (:size db)))
+
+(rf/reg-sub
+ ::ships
+ (fn [db]
+   (:ships db)))
