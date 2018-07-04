@@ -11,3 +11,8 @@
  ::ships
  (fn [db]
    (:ships db)))
+
+(rf/reg-sub
+ ::plays
+ (fn [db]
+   (conj (:plays db) (assoc (:guess db) :status "guess"))))
