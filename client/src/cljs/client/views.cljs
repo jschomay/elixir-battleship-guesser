@@ -1,7 +1,8 @@
 (ns client.views
   (:require
     [re-frame.core :as rf]
-    [client.subs :as subs]))
+    [client.subs :as subs]
+    [client.events :as events]))
 
 (defn to-point
   [i {:keys [cols]}]
@@ -17,11 +18,11 @@
 
 (defn layer
   [class-name {:keys [cols rows]} children]
-  [:div.layer 
-   {:class (str "layer--" class-name)
-    :style {:grid-template-columns (str  "repeat(" cols " , 1fr)")
-            :grid-template-rows (str  "repeat(" rows " , 1fr)")}}
-   children])
+  (into [:div.layer 
+         {:class (str "layer--" class-name)
+          :style {:grid-template-columns (str  "repeat(" cols " , 1fr)")
+                  :grid-template-rows (str  "repeat(" rows " , 1fr)")}}]
+   children))
 
 (defn water-tile
   [coords] 
@@ -48,13 +49,24 @@
 (defn main-panel []
   (let [{:keys [ cols rows] :as size} @(rf/subscribe [::subs/size])
         ships @(rf/subscribe [::subs/ships])
-        plays @(rf/subscribe [::subs/plays])]
+        plays @(rf/subscribe [::subs/plays])
+        change-size #(rf/dispatch [::events/change-grid-size %1 (-> %2 .-target .-value)])]
     [:div.game
      [:h1 "Battleship!"]
-     [:div "cols:" cols]
-     [:div "rows:" rows]
+     [:div.size
+       [:div "Columns: " 
+        [:input {:type "number"
+                 :size 2
+                 :value cols
+                 :on-change (partial change-size :cols)}]]
+       [:div "Rows: " 
+        [:input {:type "number"
+                 :size 2
+                 :value rows
+                 :on-change (partial change-size :rows)}]]]
      [:div.board
-      (layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) water-tile)))
-      (layer "ships" size (map ship-tile ships))
-      (layer "plays" size (map play-tile plays))]]))
+      [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) water-tile))]]]))
+      ; [layer "ships" size (map ship-tile ships)]
+      ; [layer "ships" size (map ship-tile ships)]
+      ; [layer "plays" size (map play-tile plays)]]]))
 

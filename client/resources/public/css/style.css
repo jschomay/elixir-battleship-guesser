@@ -9,6 +9,22 @@ body {
   align-items: center;
 }
 
+.size {
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.size input {
+  font-size: 16px;
+  outline: none;
+  border: none;
+  background: #444;
+  color: white;
+  width: 3em;
+  padding: 3px;
+  margin: 2px;
+}
+
 .board {
   display: inline-block;
   position: relative;
