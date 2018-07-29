@@ -18,12 +18,9 @@
    (:ship-in-progress db)))
 
 (rf/reg-sub
-  ::ships
-  (fn [db]
-    (if (and (= :ships (:scene db))
-             (not-empty (:ship-in-progress db)))
-      (conj (:ships db) (:ship-in-progress db))
-      (:ships db))))
+ ::ships
+ (fn [db]
+   (:ships db)))
 
 (rf/reg-sub
  ::plays

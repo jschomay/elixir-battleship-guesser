@@ -34,7 +34,7 @@
         (assoc db :ship-in-progress [coord coord])
 
         (assoc db
-               :ship-in-progress []
+               :ship-in-progress nil
                :ships (conj ships ship-in-progress))))))
 
 (defn ship-to-vec [[[x1 y1] [x2 y2]]]

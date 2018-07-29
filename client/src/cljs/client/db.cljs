@@ -3,7 +3,7 @@
 (def default-db
   {:size {:cols 7 :rows 5}
    :scene :board
-   :ship-in-progress []
+   :ship-in-progress nil
    :ships []
    :plays []
    :guess {:col 3 :row 5}})

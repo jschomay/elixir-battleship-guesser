@@ -42,7 +42,8 @@
   [:div.scene.scene--ships
    [:h3 "Layout your ships"]
    [:p "Click on a square to start a ship, then click on another square to finish it.  You can make as many as you like."]
-   [:button {:on-click #(rf/dispatch [::events/next-scene])} "Play!"]])
+   (when (seq @(rf/subscribe [::subs/ships]))
+     [:button {:on-click #(rf/dispatch [::events/next-scene])} "Play!"])])
 
 (defn play []
   [:div.scene.scene--ships
@@ -98,6 +99,7 @@
 (defn main-panel []
   (let [{:keys [ cols rows] :as size} @(rf/subscribe [::subs/size])
         ships @(rf/subscribe [::subs/ships])
+        ship-in-progress @(rf/subscribe [::subs/ship-in-progress])
         plays @(rf/subscribe [::subs/plays])
         scene @(rf/subscribe [::subs/scene])
         can-remove-ship @(rf/subscribe [::subs/can-remove-ship])
@@ -107,6 +109,6 @@
      [instructions scene] 
      [:div.board
       [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) (water-tile can-add-ships)))]
-      [layer "ships" size (map (partial ship-tile can-remove-ship) ships)]]]))
+      [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]]]))
       ; [layer "plays" size (map play-tile plays)]]]))
 
