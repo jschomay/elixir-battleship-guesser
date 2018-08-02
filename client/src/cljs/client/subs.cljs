@@ -1,6 +1,7 @@
 (ns client.subs
   (:require
-   [re-frame.core :as rf]))
+   [re-frame.core :as rf]
+   [client.db :as db]))
 
 (rf/reg-sub
  ::size
@@ -23,9 +24,24 @@
    (:ships db)))
 
 (rf/reg-sub
- ::plays
+  ::plays
+  (fn [db]
+    (:plays db)))
+
+(rf/reg-sub
+ ::game-over
  (fn [db]
-   (:plays db)))
+   (:game-over db)))
+
+(rf/reg-sub
+  ::accuracy
+  :<- [::plays]
+  :<- [::ships]
+  (fn [[plays ships] _]
+    (js/Math.round
+      (* 100 (/ (count (mapcat db/ship-to-vec ships))
+                (count plays))))))
+
 
 (rf/reg-sub
   ::can-add-ships

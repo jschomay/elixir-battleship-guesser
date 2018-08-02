@@ -6,7 +6,8 @@
    :ship-in-progress nil
    :ships []
    :game-id nil
-   :plays []})
+   :plays []
+   :game-over false})
 
 (def example-ships
   [[[3 3] [3 4]]

@@ -42,15 +42,23 @@
   [:div.scene.scene--ships
    [:h3 "Layout your ships"]
    [:p "Click on a square to start a ship, then click on another square to finish it.  You can make as many as you like."]
-   (when (seq @(rf/subscribe [::subs/ships]))
-     [:button {:on-click #(rf/dispatch [::events/next-scene])
-               :disabled (seq @(rf/subscribe [::subs/ship-in-progress]))}
-      "Play!"])])
+   [:button {:on-click #(rf/dispatch [::events/next-scene])
+             :disabled (or (empty? @(rf/subscribe [::subs/ships]))
+                           @(rf/subscribe [::subs/ship-in-progress]))}
+    "Play!"]])
 
 (defn play []
   [:div.scene.scene--ships
-   [:h3 "It's time to play!"]
-   [:p "Sit back and watch the AI try to sink your ships."]])
+   (if @(rf/subscribe [::subs/game-over])
+     [:div
+      [:h3 (str "Game Over!")]
+      [:p (str "The computer sunk all your ships in "
+               (count @(rf/subscribe [::subs/plays]))
+               " moves. (" @(rf/subscribe [::subs/accuracy]) "% accuracy)")]
+      [:button {:on-click #(rf/dispatch [::events/next-scene])} "Play again"]]
+     [:div
+      [:h3 "It's time to play!"]
+      [:p "Sit back and watch the AI try to sink your ships."]])])
 
 ;;;;;;;;;;;;;; Layout ;;;;;;;;;;;;;;;;
 

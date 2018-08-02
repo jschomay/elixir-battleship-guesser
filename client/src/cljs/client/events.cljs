@@ -21,15 +21,6 @@
 (def server-url "http://localhost:4000/")
 ; TODO switch to based on prod flag
 
-(defn guess-result [ships plays guess]
-  (let [ship-hit? (some #(when (db/hit? % guess) %) ships)
-        ship-sunk? (db/sunk? (conj plays guess) ship-hit?)]
-    (cond
-      ship-hit? (if ship-sunk?
-                  ["sunk" {:params {:size (count (db/ship-to-vec ship-hit?))}}]
-                  ["hit"])
-      :always ["miss"])))
-
 
 (defn make-request [endpoint & [game-id overrides]]
   (merge
@@ -56,6 +47,7 @@
                              :params (:size db)
                              :on-success [::game-created]
                              :on-failure [::bad-response]})}
+      :play {:db db/default-db}
       {:db db})))
       
 
@@ -71,14 +63,26 @@
   (fn [_ [_ & args]]
     {:http-xhrio (apply make-request args)}))
 
+(defn guess-result [ships plays guess]
+  (let [hit-ship (some #(when (db/hit? % guess) %) ships)
+        sunk (and hit-ship (db/sunk? (conj plays guess) hit-ship))]
+    (cond
+      sunk ["sunk" {:params {:size (count (db/ship-to-vec hit-ship))}}]
+      hit-ship ["hit"]
+      :always ["miss"])))
+
+
 (rf/reg-event-fx
   ::receive-guess
   (fn [{{:keys [:game-id :ships :plays] :as db} :db} [_ {guess :guess}]]
+
     (let [[status overrides] (guess-result ships plays guess)
-          new-plays (conj plays (assoc guess :status status))]
+          new-plays (conj plays (assoc guess :status status))
+          game-over (and (= status "sunk") (db/game-over? new-plays ships))]
+
       (into
-        {:db (assoc db :plays new-plays)}
-        (when (not (db/game-over? new-plays ships))
+        {:db (assoc db :plays new-plays :game-over game-over)}
+        (when (not game-over)
           {:dispatch-later [{:ms 500
                              :dispatch [::request-guess status game-id overrides]}]})))))
 
