@@ -22,7 +22,8 @@ defmodule Web.Router do
     case get_req_header(conn, "game-token") do
       [] ->
         conn
-        |> send_resp(401, "You must provide a `game-token` header")
+        |> put_resp_header("content-type", "application/json; charset=utf-8")
+        |> send_resp(401, Poison.encode!(%{error: "You must provide a `game-token` header"}, pretty: false))
         |> halt
 
       [token] ->
@@ -32,7 +33,8 @@ defmodule Web.Router do
 
           _ ->
             conn
-            |> send_resp(401, "Cannot find the game for that token")
+            |> put_resp_header("content-type", "application/json; charset=utf-8")
+            |> send_resp(401, Poison.encode!(%{error: "Cannot find the game for that token"}, pretty: false))
             |> halt
         end
     end

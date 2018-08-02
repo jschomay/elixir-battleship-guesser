@@ -88,7 +88,7 @@ body {
   color: black;
 }
 
-.tile--hit {
+.tile--hit, .tile--sunk {
   background: orange;
 }
 

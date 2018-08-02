@@ -25,7 +25,7 @@
 (rf/reg-sub
  ::plays
  (fn [db]
-   (conj (:plays db) (assoc (:guess db) :status "guess"))))
+   (:plays db)))
 
 (rf/reg-sub
   ::can-add-ships

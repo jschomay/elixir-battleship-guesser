@@ -37,6 +37,7 @@ defmodule Web.Endpoint do
   #   key: "_web_key",
   #   signing_salt: "7zCOFXgb"
 
+  plug CORSPlug, headers: ["game-token", "content-type"]
   plug Web.Router
 
   @doc """

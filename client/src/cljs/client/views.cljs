@@ -43,7 +43,9 @@
    [:h3 "Layout your ships"]
    [:p "Click on a square to start a ship, then click on another square to finish it.  You can make as many as you like."]
    (when (seq @(rf/subscribe [::subs/ships]))
-     [:button {:on-click #(rf/dispatch [::events/next-scene])} "Play!"])])
+     [:button {:on-click #(rf/dispatch [::events/next-scene])
+               :disabled (seq @(rf/subscribe [::subs/ship-in-progress]))}
+      "Play!"])])
 
 (defn play []
   [:div.scene.scene--ships
@@ -66,8 +68,7 @@
   [:div.tile.tile--water
    (when active {:class "tile--water-active"
                  :on-click #(rf/dispatch [::events/click-water-tile coords])
-                 :on-mouse-over #(rf/dispatch [::events/hover-water-tile coords])})
-   (-> coords  seq .toString)])
+                 :on-mouse-over #(rf/dispatch [::events/hover-water-tile coords])})])
 
 (defn ship-tile
   [can-remove-ship [[col1 row1] [col2 row2] :as ship]]
@@ -77,8 +78,7 @@
                   :grid-column (str (min col1 col2) "/ span " (first (dimensions ship)))}}
          (when can-remove-ship
            {:class "tile--ship-active"
-            :on-click #(rf/dispatch [::events/remove-ship ship])}))
-   (.toString ship)])
+            :on-click #(rf/dispatch [::events/remove-ship ship])}))])
 
 (defn play-tile
   [{:keys [col row status] :as play}]
@@ -86,8 +86,7 @@
   [:div.tile.tile--play
    {:class (str "tile--" status)
     :style {:grid-row (str row "/ span 1")
-            :grid-column (str col "/ span 1")}}
-   (.toString status)])
+            :grid-column (str col "/ span 1")}}])
 
 (defn instructions [scene]
   [:div.instructions
@@ -109,6 +108,6 @@
      [instructions scene] 
      [:div.board
       [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) (water-tile can-add-ships)))]
-      [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]]]))
-      ; [layer "plays" size (map play-tile plays)]]]))
+      [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]
+      [layer "plays" size (map play-tile plays)]]]))
 

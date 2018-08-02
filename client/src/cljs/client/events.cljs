@@ -1,6 +1,8 @@
 (ns client.events
   (:require
    [re-frame.core :as rf]
+   [ajax.core :as ajax]
+   [day8.re-frame.http-fx]
    [client.db :as db]))
 
 
@@ -16,14 +18,75 @@
       db
       (assoc-in db [:size axis] (js/Math.round value)))))
 
-(rf/reg-event-db
-  ::next-scene
-  (fn [db _]
+(def server-url "http://localhost:4000/")
+; TODO switch to based on prod flag
+
+(defn guess-result [ships plays guess]
+  (let [ship-hit? (some #(when (db/hit? % guess) %) ships)
+        ship-sunk? (db/sunk? (conj plays guess) ship-hit?)]
     (cond
-      (= (:scene db) :board) (assoc db :scene :ships)
-      (= (:scene db) :ships) (assoc db :scene :play)
-      :else db)))
+      ship-hit? (if ship-sunk?
+                  ["sunk" {:params {:size (count (db/ship-to-vec ship-hit?))}}]
+                  ["hit"])
+      :always ["miss"])))
+
+
+(defn make-request [endpoint & [game-id overrides]]
+  (merge
+    (into {:method :put
+           :uri (str  server-url endpoint)
+           :format (ajax/json-request-format)
+           :response-format (ajax/json-response-format {:keywords? true}) 
+           :on-success [::receive-guess]
+           :on-failure [::bad-response]}
+      (when game-id
+        {:headers {:game-token game-id}}))
+    overrides))
+
+(rf/reg-event-fx
+  ::next-scene
+  (fn [{db :db} _]
+    (case (:scene db)
+      :board {:db (assoc db :scene :ships)}
+      :ships {:db (assoc db :scene :play)
+              :http-xhrio ( make-request
+                            "new"
+                            nil
+                            {:method :post
+                             :params (:size db)
+                             :on-success [::game-created]
+                             :on-failure [::bad-response]})}
+      {:db db})))
       
+
+
+(rf/reg-event-fx
+  ::game-created
+  (fn [{db :db} [_ {game-id :id}]]
+    {:db (assoc db :game-id game-id)
+     :http-xhrio (make-request "start" game-id)}))
+
+(rf/reg-event-fx
+  ::request-guess
+  (fn [_ [_ & args]]
+    {:http-xhrio (apply make-request args)}))
+
+(rf/reg-event-fx
+  ::receive-guess
+  (fn [{{:keys [:game-id :ships :plays] :as db} :db} [_ {guess :guess}]]
+    (let [[status overrides] (guess-result ships plays guess)
+          new-plays (conj plays (assoc guess :status status))]
+      (into
+        {:db (assoc db :plays new-plays)}
+        (when (not (db/game-over? new-plays ships))
+          {:dispatch-later [{:ms 500
+                             :dispatch [::request-guess status game-id overrides]}]})))))
+
+(rf/reg-event-db
+  ::bad-response
+  (fn [db [_ result]]
+    (js/console.error (clj->js (str "Error: " (get-in result [:response :error]))))
+    db))
 
 (rf/reg-event-db
   ::click-water-tile
@@ -37,17 +100,6 @@
                :ship-in-progress nil
                :ships (conj ships ship-in-progress))))))
 
-(defn ship-to-vec [[[x1 y1] [x2 y2]]]
-  (vec (for [x (range (min x1 x2) (inc (max x1 x2)))
-             y (range (min y1 y2) (inc (max y1 y2)))]
-         [x y])))
-
-(defn on-axis? [[x y] [x1 y1]]
-  (or (= x x1) (= y y1)))
-
-(defn collision? [ship1 ship2]
-  (not (apply distinct? (concat (ship-to-vec ship1) (ship-to-vec ship2)))))
-
 (rf/reg-event-db
   ::hover-water-tile
   (fn [{:keys [:scene :ship-in-progress :ships] :as db} [_ coord]] 
@@ -55,8 +107,8 @@
                     (= scene :ships)
                     (seq ship-in-progress))
           valid? (and
-                   (on-axis? (first ship-in-progress) coord)
-                   (not-any? (partial collision? (assoc ship-in-progress 1 coord)) ships))]
+                   (db/on-axis? (first ship-in-progress) coord)
+                   (not-any? (partial db/collision? (assoc ship-in-progress 1 coord)) ships))]
 
       (if (and active? valid?)
         (assoc-in db [:ship-in-progress 1] coord)
