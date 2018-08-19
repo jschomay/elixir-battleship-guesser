@@ -1,33 +1,66 @@
 body {
   background: #333;
   color: white;
+  margin: 0;
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+  background: #efefef;
+  margin: 0;
+  padding: 10px;
+  font-family: 'Black Ops One', cursive;
+  font-size: 2.8em;
+  color: #14568e;
+  font-weight: normal;
+  border-bottom: 3px solid black;
 }
 
 .game {
   display: flex;
   flex-direction: column;
   align-items: center;
+  font-family: sans-serif;
+  text-align: center;
+  height: 100vh;
+  background: linear-gradient(to right, #164b7d 0%,#0aa6d5 50%,#174b7d 100%);
 }
 
-.scene--size {
+.instructions {
   margin-bottom: 20px;
-  text-align: right;
 }
 
-.scene--size input {
+.form {
+  display: flex;
+}
+
+.form>* {
+  margin: 0 10px;
+}
+
+.form input {
   font-size: 16px;
   outline: none;
   border: none;
-  background: #444;
+  background: #526F79;
   color: white;
   width: 3em;
   padding: 3px;
   margin: 2px;
 }
 
+.instructions button {
+  background: #efefef;
+  border: 1px solid black;
+  padding: 5px;
+  cursor: pointer;
+}
+
 .board {
   display: inline-block;
   position: relative;
+  background: black;
 }
 
 .layer {
@@ -53,21 +86,23 @@ body {
 }
 
 .tile--water {
-  background: #4c98ff;
-  width: 50px;
-  height: 50px;
+  background: #526F79;
+  width: 45px;
+  height: 45px;
 }
 
 .tile--water-active:hover {
   cursor: pointer;
-  background: #1b61bf;
+  background: #678e9c;
 }
 
 .tile--ship {
-  background: gray;
-  border: 3px solid lightgray;
+  background: #dde7ea;
   border-radius: 2px;
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tile--ship-active {
@@ -76,8 +111,14 @@ body {
 
 .tile--ship-active:hover {
   cursor: pointer;
-  background: red;
-  border-color: red;
+  background: #9e1414;
+}
+
+.tile--ship-active:hover::before {
+  content: '\2716';
+  display: block;
+  color: white;
+  font-size: 1em;
 }
 
 .tile--play {
@@ -86,17 +127,25 @@ body {
   height: 50%;
   place-self: center;
   color: black;
+  animation: splash .2s ease-out;
+}
+
+@keyframes splash {
+  0% {
+    transform: scale(0.2,0.2);
+  }
+  80% {
+    transform: scale(1.5,1.5);
+  }
+  100% {
+    transform: scale(1,1);
+  }
 }
 
 .tile--hit, .tile--sunk {
-  background: orange;
+  background: #9e1414;
 }
 
 .tile--miss {
-  background: white;
+  background: #dde7ea;
 }
-
-.tile--guess {
-  background: yellow;
-}
-

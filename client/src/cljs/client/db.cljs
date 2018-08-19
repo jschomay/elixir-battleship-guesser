@@ -1,7 +1,7 @@
 (ns client.db)
 
 (def default-db
-  {:size {:cols 7 :rows 5}
+  {:size {:cols 8 :rows 8}
    :scene :board
    :ship-in-progress nil
    :ships []

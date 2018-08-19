@@ -26,22 +26,23 @@
         change-size #(rf/dispatch [::events/change-grid-size %1 (-> %2 .-target .-value)])]
     [:div.scene.scene--size
      [:h3 "Choose the size of your board"]
-     [:div "Columns: " 
-      [:input {:type "number"
-               :size 2
-               :value cols
-               :on-change (partial change-size :cols)}]]
-     [:div "Rows: " 
-      [:input {:type "number"
-               :size 2
-               :value rows
-               :on-change (partial change-size :rows)}]]
-     [:button {:on-click #(rf/dispatch [::events/next-scene])} "Next"]]))
+     [:div.form
+      [:div "Columns: " 
+       [:input {:type "number"
+                :size 2
+                :value cols
+                :on-change (partial change-size :cols)}]]
+      [:div "Rows: " 
+       [:input {:type "number"
+                :size 2
+                :value rows
+                :on-change (partial change-size :rows)}]]
+      [:button {:on-click #(rf/dispatch [::events/next-scene])} "Next"]]]))
 
 (defn set-ships []
   [:div.scene.scene--ships
    [:h3 "Layout your ships"]
-   [:p "Click on a square to start a ship, then click on another square to finish it.  You can make as many as you like."]
+   [:p "Click on a square to start a ship, then click on another square to finish it."] 
    [:button {:on-click #(rf/dispatch [::events/next-scene])
              :disabled (or (empty? @(rf/subscribe [::subs/ships]))
                            @(rf/subscribe [::subs/ship-in-progress]))}
@@ -112,7 +113,7 @@
         can-remove-ship @(rf/subscribe [::subs/can-remove-ship])
         can-add-ships @(rf/subscribe [::subs/can-add-ships])]
     [:div.game
-     [:h1 "Battleship!"]
+     [:h1 "AI: Battleship"]
      [instructions scene] 
      [:div.board
       [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) (water-tile can-add-ships)))]
