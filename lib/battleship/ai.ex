@@ -24,7 +24,22 @@ defmodule Battleship.AI do
         Node.select([check_vertical, check_horizontal])
       ])
 
-    bt =
+    bt_simple =
+      Node.sequence([
+        :random_guess,
+        Node.select([
+          Node.select([:right, :left]),
+          Node.select([:up, :down])
+        ])
+      ])
+
+    bt_random_directions =
+      Node.sequence([
+        :random_guess,
+        check_adjacent
+      ])
+
+    bt_advanced =
       Node.sequence([
         :random_guess,
         check_adjacent,
@@ -36,7 +51,9 @@ defmodule Battleship.AI do
         )
       ])
 
-    %__MODULE__{bt: BT.start(bt)}
+    # %__MODULE__{bt: BT.start(bt_simple)}
+    # %__MODULE__{bt: BT.start(bt_random_directions)}
+    %__MODULE__{bt: BT.start(bt_advanced)}
   end
 
   def hit(ai, point) do
