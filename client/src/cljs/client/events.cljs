@@ -34,6 +34,7 @@
         {:headers {:game-token game-id}}))
     overrides))
 
+
 (rf/reg-event-fx
   ::next-scene
   (fn [{db :db} _]
@@ -49,7 +50,6 @@
                              :on-failure [::bad-response]})}
       :play {:db db/default-db}
       {:db db})))
-      
 
 
 (rf/reg-event-fx
@@ -82,9 +82,17 @@
 
       (into
         {:db (assoc db :plays new-plays :game-over game-over)}
-        (when (not game-over)
+        (if (not game-over)
           {:dispatch-later [{:ms 500
-                             :dispatch [::request-guess status game-id overrides]}]})))))
+                             :dispatch [::request-guess status game-id overrides]}]}
+          {:dispatch [::request-guess "leave" game-id
+                      {:method :delete
+                       :on-success [::game-deleted]}]})))))
+
+(rf/reg-event-db
+  ::game-deleted
+  (fn [db _]
+    db))
 
 (rf/reg-event-db
   ::bad-response
