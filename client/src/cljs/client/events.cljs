@@ -14,9 +14,11 @@
 (rf/reg-event-db
   ::change-grid-size
   (fn [db [_ axis value]]
-    (if (-> value js/Number.parseInt ((some-fn js/Number.isNaN zero? #(< % 1))))
-      db
-      (assoc-in db [:size axis] (js/Math.round value)))))
+    (if (empty? value)
+      (assoc-in db [:size axis] "")
+      (if (-> value js/Number.parseInt ((some-fn js/Number.isNaN zero? #(< % 1))))
+        db
+        (assoc-in db [:size axis] (js/Math.round value))))))
 
 (def server-url "http://localhost:4000/")
 ; TODO switch to based on prod flag
@@ -100,31 +102,40 @@
     (js/console.error (clj->js (str "Error: " (get-in result [:response :error]))))
     db))
 
-(rf/reg-event-db
-  ::click-water-tile
-  (fn [{:keys [:scene :ships :ship-in-progress] :as db} [_ coord]] 
-    (if (not= scene :ships)
-      db
-      (if (empty? ship-in-progress)
-        (assoc db :ship-in-progress [coord coord])
 
-        (assoc db
+(defn update-ship [{:keys [:scene :ship-in-progress :ships] :as db} [_ coord]] 
+  (let [active? (and
+                  (= scene :ships)
+                  (seq ship-in-progress))
+        valid? (and
+                 (db/on-axis? (first ship-in-progress) coord)
+                 (not-any? (partial db/collision? (assoc ship-in-progress 1 coord)) ships))]
+
+    (if (and active? valid?)
+      (assoc-in db [:ship-in-progress 1] coord)
+      db)))
+
+
+(rf/reg-event-db
+  ::start-ship
+  (fn [{:keys [:scene] :as db} [e coord]] 
+    (when (= scene :ships)
+      (assoc db :ship-in-progress [coord coord]))))
+
+
+(rf/reg-event-db
+  ::finish-ship
+  (fn [{:keys [:scene] :as db} [_ coords]] 
+    (when (= scene :ships)
+      (let [{:keys [:ships :ship-in-progress] :as new-db}
+            (update-ship db [nil coords])]
+        (assoc new-db
                :ship-in-progress nil
                :ships (conj ships ship-in-progress))))))
 
 (rf/reg-event-db
-  ::hover-water-tile
-  (fn [{:keys [:scene :ship-in-progress :ships] :as db} [_ coord]] 
-    (let [active? (and
-                    (= scene :ships)
-                    (seq ship-in-progress))
-          valid? (and
-                   (db/on-axis? (first ship-in-progress) coord)
-                   (not-any? (partial db/collision? (assoc ship-in-progress 1 coord)) ships))]
-
-      (if (and active? valid?)
-        (assoc-in db [:ship-in-progress 1] coord)
-        db))))
+  ::update-ship
+  update-ship)
 
 (rf/reg-event-db
   ::remove-ship

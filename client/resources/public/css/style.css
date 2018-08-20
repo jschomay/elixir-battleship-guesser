@@ -33,6 +33,8 @@ h1 {
 
 .form {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .form>* {
@@ -148,4 +150,29 @@ h1 {
 
 .tile--miss {
   background: #dde7ea;
+}
+
+@media (max-width: 425px) {
+  .game {
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  .tile--water {
+    touch-action: none;
+    width: 25px;
+    height: 25px;
+  }
+
+  .form input {
+    font-size: 1.2em;
+  }
+
+  .form button, .instructions button {
+    margin: 20px 30% 0;
+    font-size: 1.2em;
+  }
 }

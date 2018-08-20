@@ -42,7 +42,7 @@
 (defn set-ships []
   [:div.scene.scene--ships
    [:h3 "Layout your ships"]
-   [:p "Click on a square to start a ship, then click on another square to finish it."] 
+   [:p "Drag to place your ships on the grid"] 
    [:button {:on-click #(rf/dispatch [::events/next-scene])
              :disabled (or (empty? @(rf/subscribe [::subs/ships]))
                            @(rf/subscribe [::subs/ship-in-progress]))}
@@ -71,13 +71,29 @@
                   :grid-template-rows (str  "repeat(" rows " , 1fr)")}}]
    children))
 
+(defn coords-under-touch [e]
+  (.preventDefault e)
+  (->
+    e
+    .-changedTouches
+    (as-> touches (.item touches 0))
+    (as-> touch (js/document.elementFromPoint (.-clientX touch) (.-clientY touch)))
+    .-dataset
+    (as-> data [(js/Number.parseInt (.-column data)) (js/Number.parseInt (.-row data))])))
+
 (defn water-tile
-  [coords active] 
+  [[column row :as coords] active] 
   ^{:key coords}
   [:div.tile.tile--water
-   (when active {:class "tile--water-active"
-                 :on-click #(rf/dispatch [::events/click-water-tile coords])
-                 :on-mouse-over #(rf/dispatch [::events/hover-water-tile coords])})])
+   (into {:data-row row :data-column column}
+         (when active
+           {:class "tile--water-active"
+            :on-mouse-down #(rf/dispatch [::events/start-ship coords])
+            :on-mouse-up #(rf/dispatch [::events/finish-ship coords])
+            :on-touch-start #(rf/dispatch [::events/start-ship (coords-under-touch %)])
+            :on-touch-end #(rf/dispatch [::events/finish-ship (coords-under-touch %)])
+            :on-mouse-over #(rf/dispatch [::events/update-ship coords])
+            :on-touch-move #(rf/dispatch [::events/update-ship (coords-under-touch %)])}))])
 
 (defn ship-tile
   [can-remove-ship [[col1 row1] [col2 row2] :as ship]]
