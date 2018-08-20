@@ -134,5 +134,10 @@
      [:div.board
       [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) (water-tile can-add-ships)))]
       [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]
-      [layer "plays" size (map play-tile plays)]]]))
+      [layer "plays" size (map play-tile plays)]]
+     [:div.spacer]
+     [:div.reference
+      "Powered by my "
+      [:a {:href "https://github.com/jschomay/elixir-battleship-guesser"} "Elixir Behavior Tree"]
+      " library"]]))
 

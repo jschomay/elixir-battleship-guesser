@@ -152,6 +152,16 @@ h1 {
   background: #dde7ea;
 }
 
+.spacer {
+  flex: 1 1 auto;
+}
+
+.reference {
+  font-size: 0.7em;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
 @media (max-width: 425px) {
   .game {
     overflow: hidden;
