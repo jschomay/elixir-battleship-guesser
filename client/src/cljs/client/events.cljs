@@ -3,7 +3,8 @@
    [re-frame.core :as rf]
    [ajax.core :as ajax]
    [day8.re-frame.http-fx]
-   [client.db :as db]))
+   [client.db :as db]
+   [client.config :as config]))
 
 
 (rf/reg-event-db
@@ -20,14 +21,12 @@
         db
         (assoc-in db [:size axis] (js/Math.round value))))))
 
-(def server-url "http://localhost:4000/")
-; TODO switch to based on prod flag
 
 
 (defn make-request [endpoint & [game-id overrides]]
   (merge
     (into {:method :put
-           :uri (str  server-url endpoint)
+           :uri (str  config/server-url endpoint)
            :format (ajax/json-request-format)
            :response-format (ajax/json-response-format {:keywords? true}) 
            :on-success [::receive-guess]
