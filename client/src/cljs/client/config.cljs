@@ -6,4 +6,4 @@
 (def server-url
      (if goog.DEBUG
         "http://localhost:4000/"
-        "https://elixir-battleship-guesser.herokuapp.com/new/"))
+        "https://elixir-battleship-guesser.herokuapp.com/"))
