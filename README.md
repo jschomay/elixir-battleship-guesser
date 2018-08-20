@@ -1,13 +1,26 @@
-# Battleship Guesser (demonstrating the [Elixir Behavior Tree AI](https://hexdocs.pm/behavior_tree/api-reference.html) library)
+# Battleship Guesser (demonstrating the [Elixir Behavior Tree AI](https://hexdocs.pm/behavior_treeapi-reference.html) library)
 
-This is a backend written in Elixir that plays [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
+A demo using my [Elixir Behavior Tree AI Library](https://hexdocs.pm/behavior_treeapi-reference.html) to make an AI that plays [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
 
-You can play it in 3 ways:
+## Front end
+
+A clojurescript client that provides a UI for defining the game board size, placing your ships, and playing out the AI's guesses.
+
+It uses CSS grid to map the server data into a view, with a lot of help from the re-frame library for the interactivity.
+
+**You can [play it live](https://jschomay.github.io/elixir-battleship-guesser/).**
+
+(Note that it takes a few minutes for the heroku server to spin up sometimes.)
+
+
+## back end
+
+The backend is written in Elixir as an OTP app with a Phoenix RESTful api.
+
+You use it in 2 ways:
 
 1) Via the command line script (see Releases)
-2) Via a RESTful web server (hosted on Heroku, instructions below)
-
-## Server endpoints
+2) Via a RESTful web server (hosted on Heroku, instructions below):
 
 ### Create a new game
 
