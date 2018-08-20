@@ -40,7 +40,14 @@
   ::next-scene
   (fn [{db :db} _]
     (case (:scene db)
-      :board {:db (assoc db :scene :ships)}
+      :board {:db (assoc db :scene :ships)
+              :http-xhrio (make-request ; need to wake up heroku
+                            ""
+                            nil
+                            {:method :get
+                             :response-format (ajax/text-response-format)
+                             :on-success [::noop]})}
+
       :ships {:db (assoc db :scene :play)
               :http-xhrio ( make-request
                             "new"
@@ -49,7 +56,9 @@
                              :params (:size db)
                              :on-success [::game-created]
                              :on-failure [::bad-response]})}
+
       :play {:db db/default-db}
+
       {:db db})))
 
 
@@ -88,10 +97,10 @@
                              :dispatch [::request-guess status game-id overrides]}]}
           {:dispatch [::request-guess "leave" game-id
                       {:method :delete
-                       :on-success [::game-deleted]}]})))))
+                       :on-success [::noop]}]})))))
 
 (rf/reg-event-db
-  ::game-deleted
+  ::noop
   (fn [db _]
     db))
 
