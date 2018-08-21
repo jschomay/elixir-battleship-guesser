@@ -133,8 +133,10 @@
      [instructions scene] 
      [:div.board
       [layer "water" size (for [ i (range (* cols rows))] (-> i (to-point size) (water-tile can-add-ships)))]
-      [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]
-      [layer "plays" size (map play-tile plays)]]
+      [:div.layer-container
+       [layer "ships" size (map (partial ship-tile can-remove-ship) (keep identity (conj ships ship-in-progress)))]]
+      [:div.layer-container
+       [layer "plays" size (map play-tile plays)]]]
      [:div.spacer]
      [:div.reference
       "Powered by my "
