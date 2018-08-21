@@ -6,23 +6,6 @@
    [client.db :as db]
    [client.config :as config]))
 
-
-(rf/reg-event-db
-  ::initialize-db
-  (fn [_ _]
-    db/default-db))
-
-(rf/reg-event-db
-  ::change-grid-size
-  (fn [db [_ axis value]]
-    (if (empty? value)
-      (assoc-in db [:size axis] "")
-      (if (-> value js/Number.parseInt ((some-fn js/Number.isNaN zero? #(< % 1))))
-        db
-        (assoc-in db [:size axis] (js/Math.round value))))))
-
-
-
 (defn make-request [endpoint & [game-id overrides]]
   (merge
     (into {:method :put
@@ -37,16 +20,33 @@
 
 
 (rf/reg-event-fx
+  ::initialize-db
+  (fn [_ _]
+    {:db  db/default-db
+     ; need to wake up heroku
+     :http-xhrio (make-request
+                   ""
+                   nil
+                   {:method :get
+                    :response-format (ajax/text-response-format)
+                    :on-success [::noop]})}))
+
+(rf/reg-event-db
+  ::change-grid-size
+  (fn [db [_ axis value]]
+    (if (empty? value)
+      (assoc-in db [:size axis] "")
+      (if (-> value js/Number.parseInt ((some-fn js/Number.isNaN zero? #(< % 1))))
+        db
+        (assoc-in db [:size axis] (js/Math.round value))))))
+
+
+
+(rf/reg-event-fx
   ::next-scene
   (fn [{db :db} _]
     (case (:scene db)
-      :board {:db (assoc db :scene :ships)
-              :http-xhrio (make-request ; need to wake up heroku
-                            ""
-                            nil
-                            {:method :get
-                             :response-format (ajax/text-response-format)
-                             :on-success [::noop]})}
+      :board {:db (assoc db :scene :ships)}
 
       :ships {:db (assoc db :scene :play)
               :http-xhrio ( make-request
