@@ -2,6 +2,7 @@ body {
   background: #333;
   color: white;
   margin: 0;
+  background: linear-gradient(to right, #164b7d 0%,#0aa6d5 50%,#174b7d 100%);
 }
 
 h1 {
@@ -24,7 +25,6 @@ h1 {
   font-family: sans-serif;
   text-align: center;
   height: 100vh;
-  background: linear-gradient(to right, #164b7d 0%,#0aa6d5 50%,#174b7d 100%);
 }
 
 .instructions {
