@@ -132,7 +132,8 @@ h1 {
   border-radius: 50%;
   width: 50%;
   height: 50%;
-  place-self: center;
+  align-self: center;
+  justify-self: center;
   color: black;
   animation: splash .2s ease-out;
 }
