@@ -2,7 +2,8 @@
   (:require
     [re-frame.core :as rf]
     [client.subs :as subs]
-    [client.events :as events]))
+    [client.events :as events]
+    [goog.dom.dataset :as data]))
 
 ;;;;;;;;;;;;;; Helpers ;;;;;;;;;;;;;;;;
 
@@ -71,19 +72,15 @@
                   :grid-template-rows (str  "repeat(" rows " , 1fr)")}}]
    children))
 
-(defn tap [x]
-  (js/console.log x)
-  x)
-
 (defn coords-under-touch [e]
   (.preventDefault e)
   (->
     e
     .-changedTouches
-    (as-> touches (.item touches 0))
+    (-> (.item 0))
     (as-> touch (js/document.elementFromPoint (.-clientX touch) (.-clientY touch)))
-    .-dataset
-    (as-> data [(js/Number.parseInt (.-column data)) (js/Number.parseInt (.-row data))])))
+    (as-> el [(-> el (data/get "column") js/Number.parseInt)
+              (-> el (data/get "row") js/Number.parseInt)])))
 
 (defn water-tile
   [[column row :as coords] active] 
