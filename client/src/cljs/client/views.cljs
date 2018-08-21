@@ -71,6 +71,10 @@
                   :grid-template-rows (str  "repeat(" rows " , 1fr)")}}]
    children))
 
+(defn tap [x]
+  (js/console.log x)
+  x)
+
 (defn coords-under-touch [e]
   (.preventDefault e)
   (->
@@ -89,9 +93,9 @@
          (when active
            {:class "tile--water-active"
             :on-mouse-down #(rf/dispatch [::events/start-ship coords])
-            :on-mouse-up #(rf/dispatch [::events/finish-ship coords])
+            :on-mouse-up #(rf/dispatch [::events/finish-ship])
             :on-touch-start #(rf/dispatch [::events/start-ship (coords-under-touch %)])
-            :on-touch-end #(rf/dispatch [::events/finish-ship (coords-under-touch %)])
+            :on-touch-end #(rf/dispatch [::events/finish-ship])
             :on-mouse-over #(rf/dispatch [::events/update-ship coords])
             :on-touch-move #(rf/dispatch [::events/update-ship (coords-under-touch %)])}))])
 

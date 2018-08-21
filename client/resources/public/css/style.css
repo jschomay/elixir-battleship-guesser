@@ -179,8 +179,16 @@ h1 {
 
   .tile--water {
     touch-action: none;
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .tile--water-active:hover {
+    background: #526F79;
+  }
+
+  .layer {
+    gap: 1px;
   }
 
   .form input {
