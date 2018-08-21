@@ -1,0 +1,202 @@
+body {
+  background: #333;
+  color: white;
+  margin: 0;
+  background: linear-gradient(to right, #164b7d 0%,#0aa6d5 50%,#174b7d 100%);
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+  background: #efefef;
+  margin: 0;
+  padding: 10px;
+  font-family: 'Black Ops One', cursive;
+  font-size: 2.8em;
+  color: #14568e;
+  font-weight: normal;
+  border-bottom: 3px solid black;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: sans-serif;
+  text-align: center;
+  height: 100vh;
+}
+
+.instructions {
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.form>* {
+  margin: 0 10px;
+}
+
+.form input {
+  font-size: 16px;
+  outline: none;
+  border: none;
+  background: #526F79;
+  color: white;
+  width: 3em;
+  padding: 3px;
+  margin: 2px;
+}
+
+.instructions button {
+  background: #efefef;
+  border: 1px solid black;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.board {
+  display: inline-block;
+  position: relative;
+  background: black;
+}
+
+/* necessary for height 100% to work on safari :( */
+.layer-container {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.layer {
+  display: grid;
+  grid-gap: 4px;
+  border: 5px solid black;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+.layer--water {
+  position: relative;
+  pointer-events: initial;
+}
+
+
+.tile {
+}
+
+.tile--water {
+  background: #526F79;
+  width: 45px;
+  height: 45px;
+}
+
+.tile--water-active:hover {
+  cursor: pointer;
+  background: #678e9c;
+}
+
+.tile--ship {
+  background: #dde7ea;
+  border-radius: 2px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tile--ship-active {
+  pointer-events: initial;
+}
+
+.tile--ship-active:hover {
+  cursor: pointer;
+  background: #9e1414;
+}
+
+.tile--ship-active:hover::before {
+  content: '\2716';
+  display: block;
+  color: white;
+  font-size: 1em;
+}
+
+.tile--play {
+  border-radius: 50%;
+  width: 50%;
+  height: 50%;
+  align-self: center;
+  justify-self: center;
+  color: black;
+  animation: splash .2s ease-out;
+}
+
+@keyframes splash {
+  0% {
+    transform: scale(0.2,0.2);
+  }
+  80% {
+    transform: scale(1.5,1.5);
+  }
+  100% {
+    transform: scale(1,1);
+  }
+}
+
+.tile--hit, .tile--sunk {
+  background: #9e1414;
+}
+
+.tile--miss {
+  background: #dde7ea;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.reference {
+  font-size: 0.7em;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+@media (max-width: 425px) {
+  .game {
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  .tile--water {
+    touch-action: none;
+    width: 30px;
+    height: 30px;
+  }
+
+  .tile--water-active:hover {
+    background: #526F79;
+  }
+
+  .layer {
+    gap: 1px;
+  }
+
+  .form input {
+    font-size: 1.2em;
+  }
+
+  .form button, .instructions button {
+    margin: 20px 30% 0;
+    font-size: 1.2em;
+  }
+}
