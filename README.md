@@ -1,6 +1,6 @@
-# Battleship Guesser (demonstrating the [Elixir Behavior Tree AI](https://hexdocs.pm/behavior_treeapi-reference.html) library)
+# Battleship Guesser (demonstrating the [Elixir Behavior Tree AI](https://hexdocs.pm/behavior_tree/api-reference.html) library)
 
-A demo using my [Elixir Behavior Tree AI Library](https://hexdocs.pm/behavior_treeapi-reference.html) to make an AI that plays [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
+A demo using my [Elixir Behavior Tree AI Library](https://hexdocs.pm/behavior_tree/api-reference.html) to make an AI that plays [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)).
 
 ## Front end
 
